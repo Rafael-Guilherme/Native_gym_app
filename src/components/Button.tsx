@@ -20,7 +20,7 @@ const Button = ({title, variant = 'solid', ...rest}: Props) => {
         {...rest}
     >
         <Text 
-            color={variant === "outline" ? "greem.500" : "white"}
+            color={variant === "outline" ? "green.500" : "white"}
             fontFamily="heading" 
             fontSize="sm"
         >
