@@ -5,11 +5,14 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 
 import { api } from '@services/api'
+import { UseAuth } from '@hooks/useAuth'
 
 import LogoSvg from "@assets/logo.svg"
 import backgroundImg from '@assets/background.png'
 
 import { AppError } from '@utils/AppError'
+
+import { useState } from 'react'
 
 import Input from '@components/Input'
 import Button from '@components/Button'
@@ -29,7 +32,9 @@ const signUpSchema = yup.object({
 })
 
 export function SignUp() {
+    const [isLoading, setIsLoading] = useState(false)
     const navigation = useNavigation()
+    const { signIn } = UseAuth()
     const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({
         resolver: yupResolver(signUpSchema)
     })
@@ -41,9 +46,14 @@ export function SignUp() {
     }
 
     async function handleSignUp({ name, email, password }: FormDataProps) {
-        try{
-            const response = await api.post('/users', { name, email, password })
-        }catch (error) {
+        try {
+            setIsLoading(true)
+
+            await api.post('/users', { name, email, password })
+            await signIn(email, password)
+        } catch (error) {
+            setIsLoading(false)
+
             const isAppError = error instanceof AppError
             const title = isAppError ? error.message : 'Não foi possível criar a conta. Tente novamente mais tarde'
             
@@ -53,8 +63,9 @@ export function SignUp() {
                 bgColor: 'red.500'
             })
             
+        } finally {
+            setIsLoading(false)
         }
-        
     }
 
     return (
@@ -142,6 +153,7 @@ export function SignUp() {
                     <Button 
                         title='Criar e acessar'
                         onPress={handleSubmit(handleSignUp)}
+                        isLoading={isLoading}
                     />
 
                 </Center>
