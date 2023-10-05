@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 
 import { api } from '@services/api'
-import { UseAuth } from '@hooks/useAuth'
+import { useAuth } from '@hooks/useAuth'
 
 import LogoSvg from "@assets/logo.svg"
 import backgroundImg from '@assets/background.png'
@@ -34,7 +34,7 @@ const signUpSchema = yup.object({
 export function SignUp() {
     const [isLoading, setIsLoading] = useState(false)
     const navigation = useNavigation()
-    const { signIn } = UseAuth()
+    const { signIn } = useAuth()
     const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({
         resolver: yupResolver(signUpSchema)
     })
